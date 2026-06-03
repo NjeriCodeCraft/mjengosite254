@@ -19,7 +19,7 @@ app.post('/', handleUSSD);
 app.use('/api/payments', paymentRoutes)
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://mjengosite254.vercel.app'],
   credentials: true
 }));
 app.use(bodyParser.json());
