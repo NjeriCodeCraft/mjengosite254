@@ -6,7 +6,7 @@ import SiteCard from '../components/SiteCard'
 import KPICard from '../components/KPICard'
 import AddSiteModal from '../components/AddSiteModal'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = 'https://mjengosite254.onrender.com/api'
 
 export default function Dashboard() {
   const router = useRouter()

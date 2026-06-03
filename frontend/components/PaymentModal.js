@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api'
-const RATE_PER_HOUR = 500 // Ksh per hour - adjust as needed
+const API_URL = 'https://mjengosite254.onrender.com/api'
+const RATE_PER_HOUR = 100 // Ksh per hour - adjust as needed
 
 export default function PaymentModal({ site, workers = [], onClose, onSubmit }) {
   const [step, setStep] = useState('confirm')
