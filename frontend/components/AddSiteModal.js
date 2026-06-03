@@ -7,13 +7,33 @@ export default function AddSiteModal({ onClose, onSubmit, loading }) {
     controllerName: '',
     controllerPhone: '',
     totalExpected: '',
-    totalTools: ''
+    tools: []
   })
+
+  const [toolInput, setToolInput] = useState('')
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    })
+  }
+
+  const addTool = (e) => {
+    e.preventDefault()
+    if (toolInput.trim()) {
+      setFormData({
+        ...formData,
+        tools: [...formData.tools, { name: toolInput, received: false }]
+      })
+      setToolInput('')
+    }
+  }
+
+  const removeTool = (index) => {
+    setFormData({
+      ...formData,
+      tools: formData.tools.filter((_, i) => i !== index)
     })
   }
 
@@ -26,7 +46,7 @@ export default function AddSiteModal({ onClose, onSubmit, loading }) {
       controllerName: '',
       controllerPhone: '',
       totalExpected: '',
-      totalTools: ''
+      tools: []
     })
   }
 
@@ -89,28 +109,52 @@ export default function AddSiteModal({ onClose, onSubmit, loading }) {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Expected Workers</label>
+          <div className="form-group">
+            <label>Expected Workers</label>
+            <input
+              type="number"
+              name="totalExpected"
+              placeholder="e.g. 20"
+              value={formData.totalExpected}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Tools Deployed 🔧</label>
+            <div className="tool-input-group">
               <input
-                type="number"
-                name="totalExpected"
-                placeholder="e.g. 20"
-                value={formData.totalExpected}
-                onChange={handleChange}
-                required
+                type="text"
+                placeholder="e.g. Hammer, Shovel, etc"
+                value={toolInput}
+                onChange={(e) => setToolInput(e.target.value)}
               />
+              <button 
+                type="button"
+                className="btn-add-tool"
+                onClick={addTool}
+              >
+                + Add
+              </button>
             </div>
-            <div className="form-group">
-              <label>Total Tools</label>
-              <input
-                type="number"
-                name="totalTools"
-                placeholder="e.g. 5"
-                value={formData.totalTools}
-                onChange={handleChange}
-              />
-            </div>
+
+            {formData.tools.length > 0 && (
+              <div className="tools-list">
+                {formData.tools.map((tool, index) => (
+                  <div key={index} className="tool-tag">
+                    <span>{tool.name}</span>
+                    <button
+                      type="button"
+                      className="btn-remove-tool"
+                      onClick={() => removeTool(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="modal-actions">

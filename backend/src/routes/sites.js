@@ -13,21 +13,19 @@ router.post('/register', async (req, res) => {
   }
 
   const siteId = uuidv4();
-  const ussdCode = uuidv4().slice(0, 8);
 
   try {
     await run(
-      `INSERT INTO sites (id, name, location, controller_phone, controller_name, ussd_code)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [siteId, name, location, controllerPhone, controllerName, ussdCode]
+      `INSERT INTO sites (id, name, location, controller_phone, controller_name)
+       VALUES (?, ?, ?, ?, ?)`,
+      [siteId, name, location, controllerPhone, controllerName]
     );
 
     res.json({
       success: true,
       message: 'Site registered successfully',
       siteId,
-      ussdCode,
-      ussdNumber: `*483*${ussdCode}#`
+      ussdNumber: '*384*35091#'
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to register site' });
@@ -43,7 +41,10 @@ router.get('/:siteId', async (req, res) => {
       return res.status(404).json({ error: 'Site not found' });
     }
 
-    res.json(site);
+    res.json({
+      ...site,
+      ussdNumber: '*384*35091#'
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch site' });
   }

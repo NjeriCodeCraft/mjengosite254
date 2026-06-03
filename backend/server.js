@@ -7,12 +7,16 @@ import ussdRoutes from './src/routes/ussd.js';
 import siteRoutes from './src/routes/sites.js';
 import workerRoutes from './src/routes/workers.js';
 import attendanceRoutes from './src/routes/attendance.js';
+import paymentRoutes from './src/routes/payments.js'
+import { handleUSSD } from './src/controllers/ussdController.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.post('/', handleUSSD);
+app.use('/api/payments', paymentRoutes)
 // Middleware
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -20,6 +24,12 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Bypass ngrok browser warning for API requests
+app.use((req, res, next) => {
+  res.setHeader('ngrok-skip-browser-warning', 'true')
+  next()
+})
 
 // Initialize database
 initializeDatabase();

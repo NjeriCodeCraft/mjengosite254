@@ -1,16 +1,14 @@
-import { useState } from 'react'
+import { useRouter } from 'next/router'
 
-export default function SiteCard({ site, onPayment }) {
-  const [copied, setCopied] = useState(false)
-
-  const copyUSSD = () => {
-    navigator.clipboard.writeText(site.ussdNumber)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+export default function SiteCard({ site }) {
+  const router = useRouter()
 
   return (
-    <div className="site-card">
+    <div 
+      className="site-card" 
+      onClick={() => router.push(`/site/${site.id}`)}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="site-header">
         <h3>{site.name}</h3>
         <span className="location">📍 {site.location}</span>
@@ -27,50 +25,9 @@ export default function SiteCard({ site, onPayment }) {
         </div>
       </div>
 
-      <div className="ussd-section">
-        <label>USSD Code for Workers</label>
-        <div className="ussd-box">
-          <code>{site.ussdNumber}</code>
-          <button 
-            className="btn-copy"
-            onClick={copyUSSD}
-          >
-            {copied ? '✓ Copied' : 'Copy'}
-          </button>
-        </div>
-        <p className="ussd-hint">Workers dial this to check in/out</p>
+      <div className="site-card-footer">
+        <span className="view-link">View Dashboard →</span>
       </div>
-
-      <div className="site-stats">
-        <div className="stat">
-          <span className="icon">✅</span>
-          <div>
-            <p className="stat-label">Checked In</p>
-            <p className="stat-value">{site.checkedIn || 0}</p>
-          </div>
-        </div>
-        <div className="stat">
-          <span className="icon">🚪</span>
-          <div>
-            <p className="stat-label">Checked Out</p>
-            <p className="stat-value">{site.checkedOut || 0}</p>
-          </div>
-        </div>
-        <div className="stat">
-          <span className="icon">🚨</span>
-          <div>
-            <p className="stat-label">Incidents</p>
-            <p className="stat-value">{site.incidents || 0}</p>
-          </div>
-        </div>
-      </div>
-
-      <button 
-        className="btn-pay"
-        onClick={onPayment}
-      >
-        💰 Pay Workers
-      </button>
     </div>
   )
 }

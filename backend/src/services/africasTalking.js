@@ -1,65 +1,46 @@
-import axios from 'axios';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({ path: join(__dirname, '../../../.env') });
+
+console.log('🔑 API KEY:', process.env.AT_API_KEY?.slice(0, 20))
 
 const AT_API_KEY = process.env.AT_API_KEY;
 const AT_USERNAME = process.env.AT_USERNAME || 'sandbox';
-const AT_BASE_URL = 'https://api.sandbox.africastalking.com';
 
-// Send SMS via Africa's Talking REST API
 export async function sendSMS(phone, message) {
   try {
-    const response = await axios.post(
-      `${AT_BASE_URL}/version1/messaging`,
+    const body = new URLSearchParams()
+    body.append('username', AT_USERNAME)
+    body.append('to', phone)
+    body.append('message', message)
+
+    const response = await fetch(
+      'https://api.sandbox.africastalking.com/version1/messaging',
       {
-        username: AT_USERNAME,
-        message: message,
-        recipients: [phone]
-      },
-      {
+        method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
           'apiKey': AT_API_KEY
-        }
+        },
+        body: body.toString()
       }
-    );
+    )
 
-    console.log(`📱 SMS sent to ${phone}`);
-    return response.data;
+    const text = await response.text()
+    console.log('📨 AT raw response:', text)
+    const data = JSON.parse(text)
+    console.log(`📱 SMS sent to ${phone}:`, JSON.stringify(data))
+    return data
   } catch (error) {
-    console.error('❌ SMS error:', error.message);
-    throw error;
+    console.error('❌ SMS error:', error.message)
+    throw error
   }
 }
 
-// Make voice call via Africa's Talking REST API
-export async function makeVoiceCall(phone, message) {
-  try {
-    const response = await axios.post(
-      `${AT_BASE_URL}/version1/voice/call`,
-      {
-        username: AT_USERNAME,
-        recipients: [phone]
-      },
-      {
-        headers: {
-          'Accept': 'application/json',
-          'apiKey': AT_API_KEY
-        }
-      }
-    );
-
-    console.log(`📞 Voice call to ${phone}`);
-    return response.data;
-  } catch (error) {
-    console.error('❌ Voice call error:', error.message);
-    throw error;
-  }
-}
-
-export default {
-  sendSMS,
-  makeVoiceCall
-};
+export default { sendSMS }
